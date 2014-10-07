@@ -33,7 +33,7 @@ Installation
 ============
 The Linux installation guide can be found at https://github.com/whoisjeremylam/vennd/blob/master/doc/linux_install.md
 
-The Windows installation guide can be found at https://github.com/whoisjeremylam/vennd/blob/master/doc/windows_install.md
+Windows installation has not been tested. Pull requests would be gladly accepted for https://github.com/whoisjeremylam/vennd/blob/master/doc/windows_install.md
 
 
 Configuration
