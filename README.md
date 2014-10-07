@@ -23,7 +23,7 @@ Requirements
 ============
 Vennd was developed on Ubuntu 12.04 LTS and is the preferred platform to run Vennd. However, Windows 7 or higher is also supported. The following are the recommended specifications for a server running Vennd:
 
-* Ubuntu 12.04 LTS or Windows 7 or higher
+* Ubuntu 14.04 LTS or Windows 7 or higher
 * 4 GB of RAM or higher, SSD with at least 128GB free space
 * Groovy 1.89 or higher. Groovy 2.3 is recommended because of JSON parsing performance improvements. It is recommended to run Vennd with the --indy parameter to enable InvokeDynamic support (http://groovy.codehaus.org/InvokeDynamic+support).
 * Oracle JDK 1.7 or higher
