@@ -15,8 +15,8 @@ For more information on how Vennd can be used, head over to vennd.io.
 
 Pre-requisites
 ==============
-* Bitcoin installed and blockchain synchronised with txindex=1 as per http://counterpartyd-build.readthedocs.org/en/latest/SettingUpBitcoind.html
-* Counterpartyd installed as per http://counterpartyd-build.readthedocs.org/en/latest/BuildingFromSource.html#on-linux
+* Bitcoind installed and blockchain synchronised with txindex=1 as per http://counterparty.io/docs/build-system/set-up-bitcoind/
+* Counterpartyd installed on Linux as per http://counterparty.io/docs/build-system/build-from-source/
 
 
 Requirements
