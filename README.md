@@ -31,14 +31,14 @@ Vennd was developed on Ubuntu 12.04 LTS and is the preferred platform to run Ven
 
 Installation
 ============
-The Linux installation guide can be found at https://github.com/whoisjeremylam/vennd/blob/master/doc/linux_install.md
+The Linux installation guide can be found at https://github.com/vennd/vennd/blob/master/doc/linux_install.md
 
-Windows installation has not been tested. Pull requests would be gladly accepted for https://github.com/whoisjeremylam/vennd/blob/master/doc/windows_install.md
+Windows installation has not been tested. Pull requests would be gladly accepted for https://github.com/vennd/vennd/blob/master/doc/windows_install.md
 
 
 Configuration
 =============
-A sample configuration to configure Vennd as gateway for your Bitcoin compatible alt-coin https://github.com/whoisjeremylam/vennd/blob/master/doc/gateway_configuration_guide.md
+A sample configuration to configure Vennd as gateway for your Bitcoin compatible alt-coin https://github.com/vennd/vennd/blob/master/doc/gateway_configuration_guide.md
 
 A sample configuration to configure Vennd as a simple vending machine
-https://github.com/whoisjeremylam/vennd/blob/master/doc/vendingmachine_configuration_guide.md
+https://github.com/vennd/vennd/blob/master/doc/vendingmachine_configuration_guide.md
