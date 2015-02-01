@@ -10,20 +10,21 @@ sudo apt-get -y install python-software-properties
 sudo apt-get -y install git-core python3
 ```
 
-Install Groovy
-==============
-The version of Groovy that is contained in the default repository is 1.8.6.
+Install Groovy (Ubuntu)
+=======================
+The 1.8.6 version of Groovy is installed by the default apt-get repository.
 
 ```
 sudo apt-get install groovy
 ```
 
-Or install Groovy 2.3.6 (preferred)
+However, installing Groovy 2.4.0+ vith the Groovy enVironment Manager (preferred)
 
 ```
-cd ~
-wget http://dl.bintray.com/groovy/maven/groovy-binary-2.3.6.zip
-unzip groovy-binary-2.3.6.zip
+curl -s get.gvmtool.net | bash
+source "$HOME/.gvm/bin/gvm-init.sh"
+gvm install groovy
+groovy -version
 ```
 
 Download Sqlite
