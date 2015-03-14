@@ -167,30 +167,46 @@ class PaymentProcessor {
         bitcoinAPI.lockBitcoinWallet() // Lock first to ensure the unlock doesn't fail
         bitcoinAPI.unlockBitcoinWallet(walletPassphrase, 30)
 
-        // Create the (unsigned) counterparty send transaction
-        def unsignedTransaction = counterpartyAPI.createSend(sourceAddress, destinationAddress, asset, amount, txFee, testMode, log4j)
-        assert unsignedTransaction instanceof java.lang.String
-        assert unsignedTransaction != null
-        if (!(unsignedTransaction instanceof java.lang.String)) { // catch non technical error in RPC call
-            assert unsignedTransaction.code == null
-        }
-
-        // sign transaction
-        def signedTransaction = counterpartyAPI.signTransaction(unsignedTransaction, log4j)
-        assert signedTransaction instanceof java.lang.String
-        assert signedTransaction != null
-
-        // send transaction
         try {
-            counterpartyAPI.broadcastSignedTransaction(signedTransaction, log4j)
+            // Pull the private key of the source address from Bitcoin API
+            def validateResult = bitcoinAPI.validateAddress(sourceAddress)
+            assert validateResult.ismine == true
+            def pubKey = validateResult.pubkey
+
+            // Create the (unsigned) counterparty send transaction
+            def unsignedTransaction = counterpartyAPI.createSend(sourceAddress, destinationAddress, asset, amount, txFee, pubKey, testMode, log4j)
+            assert unsignedTransaction instanceof java.lang.String
+            assert unsignedTransaction != null
+            if (!(unsignedTransaction instanceof java.lang.String)) { // catch non technical error in RPC call
+                assert unsignedTransaction.code == null
+            }
+            log4j.info("Unsigned TX: ${unsignedTransaction}")
+
+            // sign transaction
+//            def signedTransaction = counterpartyAPI.signTransaction(unsignedTransaction, log4j)
+            def signResult = bitcoinAPI.signRawTransaction(unsignedTransaction)
+            assert signResult.complete == true
+            assert signResult.signedTx instanceof java.lang.String
+            assert signResult.signedTx != null
+
+            def signedTransaction = signResult.signedTx
+            log4j.info("Signed TX: ${unsignedTransaction}")
+
+            // send transaction
+//            counterpartyAPI.broadcastSignedTransaction(signedTransaction, log4j)
+            def sendResult = bitcoinAPI.sendRawTransaction(signedTransaction)
+            assert sendResult.complete == true
+            assert sendResult.txid instanceof java.lang.String
+            assert sendResult.txid != null
+            log4j.info("Txid: ${sendResult.txid}")
+
             log4j.info("update payments set status='complete', lastUpdatedBlockId = ${currentBlock} where blockId = ${blockIdSource} and sourceTxid = ${payment.txid} and rowid=${payment.rowId}")
             db.execute("update payments set status='complete', lastUpdatedBlockId = ${currentBlock} where blockId = ${blockIdSource} and sourceTxid = ${payment.txid} and rowid=${payment.rowId}")
         }
         catch (Throwable e) {
             log4j.info("update payments set status='error', lastUpdatedBlockId = ${currentBlock} where blockId = ${blockIdSource} and sourceTxid = ${payment.txid} and rowid=${payment.rowId}")
             db.execute("update payments set status='error', lastUpdatedBlockId = ${currentBlock} where blockId = ${blockIdSource} and sourceTxid = ${payment.txid} and rowid=${payment.rowId}")
-
-            assert e == null
+            log4j.info(e.printStackTrace())
         }
 
         // Lock bitcoin wallet

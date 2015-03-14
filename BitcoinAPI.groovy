@@ -120,12 +120,32 @@ class BitcoinAPI {
         return result.get()
     }
 
+    public getBalance(account) {
+        def result = httpAsync.request( POST, JSON) { req ->
+            body = [method : 'getbalance',
+                    id : 'test',
+                    params : [account]
+            ]
+
+            response.success = { resp, json ->
+                return json.result
+            }
+        }
+
+        assert result instanceof java.util.concurrent.Future
+        while ( ! result.done ) {
+            Thread.sleep(100)
+        }
+
+        return result.get()
+    }
+
     public unlockBitcoinWallet(String walletPassword, int timeout) {
         try {
             def paramsJSON
             def myParams = [method: 'walletpassphrase',
-                    id: 'test',
-                    params: [walletPassword, timeout]
+                            id: 'test',
+                            params: [walletPassword, timeout]
             ]
 
             def result = httpAsync.request(POST, JSON) { req ->
@@ -184,6 +204,90 @@ class BitcoinAPI {
 
             response.success = { resp, json ->
                 return json.result
+            }
+        }
+
+        assert result instanceof java.util.concurrent.Future
+        while ( ! result.done ) {
+            Thread.sleep(100)
+        }
+
+        return result.get()
+    }
+
+    public validateAddress(address) {
+        def result = httpAsync.request( POST, JSON) { req ->
+            body = [method : 'validateaddress',
+                    id : 'test',
+                    params : [address]
+            ]
+
+            response.success = { resp, json ->
+//                println(json)
+                def outputMap = [:]
+
+                outputMap.put("ismine", json.result.ismine)
+                outputMap.put("pubkey", json.result.pubkey)
+
+                return outputMap
+            }
+        }
+
+        assert result instanceof java.util.concurrent.Future
+        while ( ! result.done ) {
+            Thread.sleep(100)
+        }
+
+        return result.get()
+    }
+
+    public signRawTransaction(txhex) {
+        def result = httpAsync.request( POST, JSON) { req ->
+            body = [method : 'signrawtransaction',
+                    id : 'test',
+                    params : [txhex]
+            ]
+
+            response.success = { resp, json ->
+//                println(json)
+                def outputMap = [:]
+                outputMap.put("complete", json.result.complete)
+                outputMap.put("signedTx", json.result.hex)
+
+                return outputMap
+            }
+        }
+
+        assert result instanceof java.util.concurrent.Future
+        while ( ! result.done ) {
+            Thread.sleep(100)
+        }
+
+        return result.get()
+    }
+
+    public sendRawTransaction(signedtxhex) {
+        def result = httpAsync.request( POST, JSON) { req ->
+            body = [method : 'sendrawtransaction',
+                    id : 'test',
+                    params : [signedtxhex]
+            ]
+
+            response.success = { resp, json ->
+//                println(json)
+                def outputMap = [:]
+
+                def complete
+                if (json.error == null) {
+                    complete = true
+                }
+                else {
+                    complete = false
+                }
+                outputMap.put("complete", complete)
+                outputMap.put("txid", json.result)
+
+                return outputMap
             }
         }
 

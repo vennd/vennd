@@ -174,49 +174,8 @@ class CounterpartyAPI {
     }
 
 
-    public broadcastSignedTransaction(String signedTransaction, log4j) {
-        try {
-            def payloadJSON
-            def myParams = [method: 'broadcast_tx',
-                            id: 'test',
-                            params: [signed_tx_hex:signedTransaction],
-                            "jsonrpc": '2.0'
-            ]
-
-            payloadJSON = new groovy.json.JsonBuilder(myParams)
-            log4j.info("broadcast payload: " + payloadJSON)
-
-
-            def result = counterpartyHttpAsync.request(POST, JSON) { req ->
-                body = myParams
-
-                response.success = { resp, json ->
-                    if (json.result == null) {
-                        log4j.info("broadcast failed - null was returned")
-
-                        assert json.result != null
-                    }
-
-                    return json.result
-                }
-
-                response.failure = { resp ->
-                    log4j.info("BroadcastSignedTransaction failed")
-                    assert resp.responseBase == null
-                }
-            }
-
-            assert result instanceof java.util.concurrent.Future
-            while (!result.done) {
-                Thread.sleep(100)
-            }
-
-            return result.get()
-        }
-        catch (Throwable e) {
-            assert e == null
-        }
-    }
+    public createSend(sourceAddress, destinationAddress, asset, amount, fee, pubkey, testMode, log4j) {
+        def myParams
 
 
     public signTransaction(String unsignedTransaction, log4j) {
@@ -268,7 +227,7 @@ class CounterpartyAPI {
         def myParams
 
         if (testMode == false) {
-            myParams = ["source":sourceAddress,"destination":destinationAddress,"asset":asset,"quantity":amount,"encoding":counterpartyTransactionEncoding,"allow_unconfirmed_inputs":counterpartyMultisendPerBlock,"fee":fee*satoshi]
+            myParams = ["source":sourceAddress,"destination":destinationAddress,"asset":asset,"quantity":amount,"encoding":counterpartyTransactionEncoding,"allow_unconfirmed_inputs":counterpartyMultisendPerBlock,"fee":fee*satoshi,"pubkey":pubkey]
 //            myParams = [sourceAddress, destinationAddress, asset, amount, counterpartyTransactionEncoding, null, counterpartyMultisendPerBlock, null]
 //            myParams = [sourceAddress, destinationAddress, asset, amount]
         }
