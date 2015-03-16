@@ -261,7 +261,7 @@ public class VenndNativeFollower {
 
 
     static processSeenBlock(currentBlock) {
-        println "Block ${currentBlock}: seen"
+        log4j.info("Block ${currentBlock}: seen")
         db.execute("insert into blocks values (${currentBlock}, 'seen', 0)")
     }
 
@@ -274,7 +274,7 @@ public class VenndNativeFollower {
         def blockHash = bitcoinAPI.getBlockHash(currentBlock)
         def block = bitcoinAPI.getBlock(blockHash)
 
-        println "Block ${currentBlock}: processing " + block['tx'].size() + " transactions"
+        log4j.info("Block ${currentBlock}: processing " + block['tx'].size() + " transactions")
 
         def result
         def rawtransactions = []
@@ -408,7 +408,7 @@ public class VenndNativeFollower {
                 // Only record if one of the input addresses is NOT the service address. ie we didn't initiate the send
                 if (inputAddresses.contains(listenerAddress) == false) {
                     parsedTransactions.add([txid, inputAddresses, outputAddresses, inAmount, inAsset, outAmount, outAsset, calculatedFee, serviceAddress, notCounterwalletSend])
-                    println "Block ${currentBlock} found service call: ${currentBlock} ${txid} ${inputAddresses} ${outputAddresses} ${inAmount/satoshi} ${inAsset} -> ${outAmount/satoshi} ${outAsset} (${calculatedFee/satoshi} ${inAsset} fee collected)"
+                    log4j.info("Block ${currentBlock} found service call: ${currentBlock} ${txid} ${inputAddresses} ${outputAddresses} ${inAmount/satoshi} ${inAsset} -> ${outAmount/satoshi} ${outAsset} (${calculatedFee/satoshi} ${inAsset} fee collected)")
                 }
             }
 
@@ -436,33 +436,33 @@ public class VenndNativeFollower {
                 // public Payment(String inAssetValue, Long currentBlockValue, String txidValue, String sourceAddressValue, String destinationAddressValue, String outAssetValue, Long outAmountValue, Long lastModifiedBlockIdValue, Long originalAmount)
                 def payment = new Payment(inAsset, currentBlock, txid, inputAddress, serviceAddress, outAsset, outAmount, currentBlock, inAmount, notCounterwalletSend)
 
-                println "insert into transactions values (${currentBlock}, ${txid})"
+                log4j.info("insert into transactions values (${currentBlock}, ${txid})")
                 db.execute("insert into transactions values (${currentBlock}, ${txid})")
                 for (eachInputAddress in transaction[1]) {
-                    println "insert into inputAddresses values (${txid}, ${eachInputAddress})"
+                    log4j.info("insert into inputAddresses values (${txid}, ${eachInputAddress})")
                     db.execute("insert into inputAddresses values (${txid}, ${eachInputAddress})")
                 }
                 for (outputAddress in transaction[2]) {
-                    println "insert into outputAddresses values (${txid}, ${outputAddress})"
+                    log4j.info("insert into outputAddresses values (${txid}, ${outputAddress})")
                     db.execute("insert into outputAddresses values (${txid}, ${outputAddress})")
                 }
-                println "insert into credits values (${currentBlock}, ${txid}, ${inputAddress}, '', ${inAsset}, ${inAmount}, ${outAsset}, ${outAmount}, 'valid')"
+                log4j.info("insert into credits values (${currentBlock}, ${txid}, ${inputAddress}, '', ${inAsset}, ${inAmount}, ${outAsset}, ${outAmount}, 'valid')")
                 db.execute("insert into credits values (${currentBlock}, ${txid}, ${inputAddress}, '', ${inAsset}, ${inAmount}, ${outAsset}, ${outAmount}, 'valid')")
-                println "insert into fees values (${currentBlock}, ${txid}, ${feeAsset}, ${feeAmount})"
+                log4j.info("insert into fees values (${currentBlock}, ${txid}, ${feeAsset}, ${feeAmount})")
                 db.execute("insert into fees values (${currentBlock}, ${txid}, ${feeAsset}, ${feeAmount})")
                 if (payment.outAmount > 0) {
                     if (outAssetIssuanceDependent) {
                         // create table if not exists issuances(blockId integer, sourceTxid string, sourceAddress string, asset string, amount integer, divisibility string, status string, lastUpdatedBlockId integer)
-                        println "insert into issuances values (${currentBlock}, ${txid}, ${inputAddress}, ${outAsset}, ${payment.outAmount}, ${outAssetDivisible}, ${payment.issuanceStatus}, ${currentBlock})"
+                        log4j.info("insert into issuances values (${currentBlock}, ${txid}, ${inputAddress}, ${outAsset}, ${payment.outAmount}, ${outAssetDivisible}, ${payment.issuanceStatus}, ${currentBlock})")
                         db.execute("insert into issuances values (${currentBlock}, ${txid}, ${inputAddress}, ${outAsset}, ${payment.outAmount}, ${outAssetDivisible}, ${payment.issuanceStatus}, ${currentBlock})")
                     }
 
-                    println "insert into payments values (${payment.currentBlock}, ${payment.txid}, ${payment.sourceAddress}, ${payment.destinationAddress}, ${payment.outAsset}, ${payment.outAmount}, ${payment.status}, ${payment.lastModifiedBlockId})"
+                    log4j.info("insert into payments values (${payment.currentBlock}, ${payment.txid}, ${payment.sourceAddress}, ${payment.destinationAddress}, ${payment.outAsset}, ${payment.outAmount}, ${payment.status}, ${payment.lastModifiedBlockId})")
                     db.execute("insert into payments values (${payment.currentBlock}, ${payment.txid}, ${payment.sourceAddress}, ${payment.destinationAddress}, ${payment.outAsset}, ${payment.outAmount}, ${payment.status}, ${payment.lastModifiedBlockId})")
 
                     // process a refund
                     if (payment.refundAmount > 0) {
-                        println "insert into payments values (${payment.currentBlock}, ${payment.txid}, ${payment.sourceAddress}, ${payment.destinationAddress}, ${payment.inAsset}, ${payment.refundAmount}, ${payment.status}, ${payment.lastModifiedBlockId}) -- refund"
+                        log4j.info("insert into payments values (${payment.currentBlock}, ${payment.txid}, ${payment.sourceAddress}, ${payment.destinationAddress}, ${payment.inAsset}, ${payment.refundAmount}, ${payment.status}, ${payment.lastModifiedBlockId}) -- refund")
                         db.execute("insert into payments values (${payment.currentBlock}, ${payment.txid}, ${payment.sourceAddress}, ${payment.destinationAddress}, ${payment.inAsset}, ${payment.refundAmount}, ${payment.status}, ${payment.lastModifiedBlockId})")
                     }
                 }
@@ -470,15 +470,15 @@ public class VenndNativeFollower {
             db.execute("commit transaction")
         } catch (Throwable e) {
             db.execute("update blocks set status='error', duration=0 where blockId = ${currentBlock}")
-            println "Block ${currentBlock}: error"
-            println "Exception: ${e}"
+            log4j.info("Block ${currentBlock}: error")
+            log4j.info("Exception: ${e}")
             db.execute("rollback transaction")
             assert e == null
         }
 
         def duration = (timeStop-timeStart)/1000
         db.execute("update blocks set status='processed', duration=${duration} where blockId = ${currentBlock}")
-        println "Block ${currentBlock}: processed in ${duration}s"
+        log4j.info("Block ${currentBlock}: processed in ${duration}s")
     }
 
 
@@ -488,9 +488,9 @@ public class VenndNativeFollower {
         venndNativeFollower.init()
         venndNativeFollower.audit()
 
-        println "native API daemon follower started"
-        println "Last processed block: " + lastProcessedBlock()
-        println "Last seen block: " + lastBlock()
+        log4j.info("native API daemon follower started")
+        log4j.info("Last processed block: " + lastProcessedBlock())
+        log4j.info("Last seen block: " + lastBlock())
 
         // Begin following blocks
         while (true) {

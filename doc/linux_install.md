@@ -10,20 +10,21 @@ sudo apt-get -y install python-software-properties
 sudo apt-get -y install git-core python3
 ```
 
-Install Groovy
-==============
-The version of Groovy that is contained in the default repository is 1.8.6.
+Install Groovy (Ubuntu)
+=======================
+The 1.8.6 version of Groovy is installed by the default apt-get repository.
 
 ```
 sudo apt-get install groovy
 ```
 
-Or install Groovy 2.3.6 (preferred)
+However, installing Groovy 2.4.0+ vith the Groovy enVironment Manager (preferred)
 
 ```
-cd ~
-wget http://dl.bintray.com/groovy/maven/groovy-binary-2.3.6.zip
-unzip groovy-binary-2.3.6.zip
+curl -s get.gvmtool.net | bash
+source "$HOME/.gvm/bin/gvm-init.sh"
+gvm install groovy
+groovy -version
 ```
 
 Download Sqlite
@@ -52,7 +53,7 @@ It is recommended that all of the processes for a single instance of a vending m
 
 ```
 cd ~
-git clone https://github.com/whoisjeremylam/vennd
+git clone https://github.com/vennd/vennd
 mkdir vennd/logs
 ```
 
@@ -76,15 +77,14 @@ sudo cp recaptchalib.php /var/www
 sudo cp httpful.phar /var/www
 sudo chmod +r /var/www/recaptchalib.php
 sudo cp vennd/generate.html /var/www
-sudo cp vennd/generate.php /var/www
 ```
 
 
 Next Steps
 ==========
-Configure Vennd to form a gateway between Bitcoin (or a Bitcoin API compatible alt-coin) and Counterparty https://github.com/whoisjeremylam/vennd/blob/master/doc/gateway_configuration_guide.md
+Configure Vennd to form a gateway between Bitcoin (or a Bitcoin API compatible alt-coin) and Counterparty https://github.com/vennd/vennd/blob/master/doc/gateway_configuration_guide.md
 
 or
 
 Configure Vennd to create a vending machine
-https://github.com/whoisjeremylam/vennd/blob/master/doc/vendingmachine_configuration_guide.md
+https://github.com/vennd/vennd/blob/master/doc/vendingmachine_configuration_guide.md

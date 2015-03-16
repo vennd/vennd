@@ -15,15 +15,15 @@ For more information on how Vennd can be used, head over to vennd.io.
 
 Pre-requisites
 ==============
-* Bitcoin installed and blockchain synchronised with txindex=1 as per http://counterpartyd-build.readthedocs.org/en/latest/SettingUpBitcoind.html
-* Counterpartyd installed as per http://counterpartyd-build.readthedocs.org/en/latest/BuildingFromSource.html#on-linux
+* Bitcoind installed and blockchain synchronised with txindex=1 as per http://counterparty.io/docs/build-system/set-up-bitcoind/
+* Counterpartyd installed on Linux as per http://counterparty.io/docs/build-system/build-from-source/
 
 
 Requirements
 ============
-Vennd was developed on Ubuntu 12.04 LTS and is the preferred platform to run Vennd. However, Windows 7 or higher is also supported. The following are the recommended specifications for a server running Vennd:
+Vennd was developed on Ubuntu 14.04 LTS and is the preferred platform to run Vennd. However, Windows 7 or higher is also supported. The following are the recommended specifications for a server running Vennd:
 
-* Ubuntu 12.04 LTS or Windows 7 or higher
+* Ubuntu 14.04 LTS (12.04 supported)
 * 4 GB of RAM or higher, SSD with at least 128GB free space
 * Groovy 1.89 or higher. Groovy 2.3 is recommended because of JSON parsing performance improvements. It is recommended to run Vennd with the --indy parameter to enable InvokeDynamic support (http://groovy.codehaus.org/InvokeDynamic+support).
 * Oracle JDK 1.7 or higher
@@ -31,14 +31,14 @@ Vennd was developed on Ubuntu 12.04 LTS and is the preferred platform to run Ven
 
 Installation
 ============
-The Linux installation guide can be found at https://github.com/whoisjeremylam/vennd/blob/master/doc/linux_install.md
+The Linux installation guide can be found at https://github.com/vennd/vennd/blob/master/doc/linux_install.md
 
-The Windows installation guide can be found at https://github.com/whoisjeremylam/vennd/blob/master/doc/windows_install.md
+Windows installation has not been tested. Pull requests would be gladly accepted for https://github.com/vennd/vennd/blob/master/doc/windows_install.md
 
 
 Configuration
 =============
-A sample configuration to configure Vennd as gateway for your Bitcoin compatible alt-coin https://github.com/whoisjeremylam/vennd/blob/master/doc/gateway_configuration_guide.md
+A sample configuration to configure Vennd as gateway for your Bitcoin compatible alt-coin https://github.com/vennd/vennd/blob/master/doc/gateway_configuration_guide.md
 
 A sample configuration to configure Vennd as a simple vending machine
-https://github.com/whoisjeremylam/vennd/blob/master/doc/vendingmachine_configuration_guide.md
+https://github.com/vennd/vennd/blob/master/doc/vendingmachine_configuration_guide.md
